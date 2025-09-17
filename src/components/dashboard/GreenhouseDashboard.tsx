@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Droplets, Beaker, Wind, Sun } from 'lucide-react';
+import { Droplets, Beaker, Wind, Sun, Zap, Lightbulb, Fan } from 'lucide-react';
 import { DashboardHeader } from './DashboardHeader';
 import { MetricCard } from './MetricCard';
+import { ActuatorCard } from './ActuatorCard';
 
 // Mock data generator for environmental metrics
 const generateMockData = () => {
@@ -26,6 +27,13 @@ export const GreenhouseDashboard = () => {
   const [historicalData, setHistoricalData] = useState(generateMockData());
   const [isConnected, setIsConnected] = useState(true);
   const [lastUpdate, setLastUpdate] = useState(new Date().toLocaleTimeString());
+  
+  // Actuator states
+  const [actuators, setActuators] = useState({
+    irrigationPump: false,
+    uvLamp: true,
+    ventilationFan: false
+  });
 
   // Simulate real-time updates
   useEffect(() => {
@@ -44,6 +52,13 @@ export const GreenhouseDashboard = () => {
   }, []);
 
   const currentData = historicalData[historicalData.length - 1];
+
+  const handleActuatorToggle = (actuatorKey: keyof typeof actuators) => {
+    setActuators(prev => ({
+      ...prev,
+      [actuatorKey]: !prev[actuatorKey]
+    }));
+  };
 
   const metrics = [
     {
@@ -92,6 +107,30 @@ export const GreenhouseDashboard = () => {
     }
   ];
 
+  const actuatorList = [
+    {
+      title: 'Irrigation Pump',
+      key: 'irrigationPump' as const,
+      isOn: actuators.irrigationPump,
+      icon: Zap,
+      description: 'Automated water distribution system'
+    },
+    {
+      title: 'UV Lamp',
+      key: 'uvLamp' as const,
+      isOn: actuators.uvLamp,
+      icon: Lightbulb,
+      description: 'Supplemental growing light source'
+    },
+    {
+      title: 'Ventilation Fan',
+      key: 'ventilationFan' as const,
+      isOn: actuators.ventilationFan,
+      icon: Fan,
+      description: 'Air circulation and temperature control'
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-dashboard">
       <DashboardHeader isConnected={isConnected} lastUpdate={lastUpdate} />
@@ -107,14 +146,36 @@ export const GreenhouseDashboard = () => {
           </p>
         </div>
 
-        {/* Metrics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Environmental Metrics - Horizontal Layout */}
+        <div className="flex flex-wrap gap-4 justify-center mb-8">
           {metrics.map((metric) => (
-            <MetricCard
-              key={metric.title}
-              {...metric}
-            />
+            <div key={metric.title} className="flex-1 min-w-[280px] max-w-[320px]">
+              <MetricCard {...metric} />
+            </div>
           ))}
+        </div>
+
+        {/* Actuators Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold text-foreground mb-2">
+            Actuator Controls
+          </h2>
+          <p className="text-muted-foreground mb-6">
+            Monitor and control greenhouse automation systems
+          </p>
+          <div className="flex flex-wrap gap-4 justify-center">
+            {actuatorList.map((actuator) => (
+              <div key={actuator.key} className="flex-1 min-w-[280px] max-w-[320px]">
+                <ActuatorCard
+                  title={actuator.title}
+                  isOn={actuator.isOn}
+                  onToggle={() => handleActuatorToggle(actuator.key)}
+                  icon={actuator.icon}
+                  description={actuator.description}
+                />
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* System Status */}
