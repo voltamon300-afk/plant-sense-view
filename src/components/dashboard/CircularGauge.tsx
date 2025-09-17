@@ -77,14 +77,6 @@ export const CircularGauge = ({
           }}
         />
         
-        {/* Center Dot */}
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r="3"
-          fill={getColor()}
-          className="transition-all duration-300"
-        />
       </svg>
       
       {/* Percentage Display */}
