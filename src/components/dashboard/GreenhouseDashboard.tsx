@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Droplets, Beaker, Wind, Sun, Zap, Lightbulb, Fan } from 'lucide-react';
 import { DashboardHeader } from './DashboardHeader';
-import { MetricCard } from './MetricCard';
+import { MetricBar } from './MetricBar';
 import { ActuatorCard } from './ActuatorCard';
 
 // Mock data generator for environmental metrics
@@ -46,7 +46,7 @@ export const GreenhouseDashboard = () => {
         setIsConnected(false);
         setTimeout(() => setIsConnected(true), 3000);
       }
-    }, 5000);
+    }, 300000); // 5 minutes
 
     return () => clearInterval(interval);
   }, []);
@@ -146,12 +146,19 @@ export const GreenhouseDashboard = () => {
           </p>
         </div>
 
-        {/* Environmental Metrics - Horizontal Layout */}
-        <div className="flex flex-wrap gap-4 justify-center mb-8">
+        {/* Environmental Metrics - Horizontal Bar Layout */}
+        <div className="space-y-4 mb-8">
           {metrics.map((metric) => (
-            <div key={metric.title} className="flex-1 min-w-[280px] max-w-[320px]">
-              <MetricCard {...metric} />
-            </div>
+            <MetricBar
+              key={metric.title}
+              title={metric.title}
+              value={metric.value}
+              unit={metric.unit}
+              min={metric.min}
+              max={metric.max}
+              optimal={metric.optimal}
+              icon={metric.icon}
+            />
           ))}
         </div>
 
